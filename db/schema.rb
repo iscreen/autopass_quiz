@@ -10,13 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_02_25_232924) do
+ActiveRecord::Schema[7.0].define(version: 2022_02_25_234309) do
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.decimal "price", precision: 10, scale: 4, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_products_on_name", unique: true
+  end
+
+  create_table "promotions", force: :cascade do |t|
+    t.string "type"
+    t.string "name"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "product_id"
+    t.decimal "amount", precision: 12, scale: 4, default: "0.0"
+    t.integer "discount_percentage", default: 0
+    t.decimal "discount_amount", precision: 6, scale: 4, default: "0.0"
+    t.integer "exceed_quantity", default: 0
+    t.integer "taken_limitation", default: 0
+    t.decimal "discount_amount_limitation", precision: 12, scale: 4, default: "0.0"
+    t.decimal "month_discount_amount_limitation", precision: 12, scale: 4, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_promotions_on_product_id"
+    t.index ["type", "start_date", "end_date"], name: "index_promotions_on_type_and_start_date_and_end_date"
   end
 
   create_table "users", force: :cascade do |t|
