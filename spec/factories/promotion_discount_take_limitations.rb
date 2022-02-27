@@ -7,6 +7,6 @@ FactoryBot.define do
     end_date { 10.days.since }
     amount { 100 }
     discount_amount { 10 }
-    taken_limitation { 2 }
+    taken_limitation { 1 }
   end
 end

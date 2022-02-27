@@ -22,4 +22,48 @@ RSpec.describe PromotionProductDiscount, type: :model do
     expect(promotion.is_a?(Promotion)).to eq(true)
     expect(promotion.is_a?(PromotionDiscount)).to eq(true)
   end
+
+  describe '#fulfill?' do
+    let(:product_100) { FactoryBot.create(:product_100) }
+    let(:promotion) do
+      FactoryBot.create(
+        :promotion_product_discount,
+        product: product_100
+      )
+    end
+    let(:order) { FactoryBot.create(:order) }
+
+    it 'order quantity is over' do
+      order.add_item!(product_100, 2)
+      expect(promotion.fulfill?(order)).to be_truthy
+    end
+
+    it 'order quantity is less' do
+      order.add_item!(product_100, 1)
+      expect(promotion.fulfill?(order)).to be_falsey
+    end
+  end
+
+  describe '#discount' do
+    let(:discount_amount) { 10 }
+    let(:product_100) { FactoryBot.create(:product_100) }
+    let(:promotion) do
+      FactoryBot.create(
+        :promotion_product_discount,
+        product: product_100,
+        discount_amount: discount_amount
+      )
+    end
+    let(:order) { FactoryBot.create(:order) }
+
+    it 'has discount' do
+      order.add_item!(product_100, 2)
+      expect(promotion.discount(order)).to eq(discount_amount)
+    end
+
+    it 'no discount' do
+      order.add_item!(product_100, 1)
+      expect(promotion.discount(order)).to eq(0)
+    end
+  end
 end
