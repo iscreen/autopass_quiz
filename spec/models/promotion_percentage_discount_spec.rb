@@ -19,7 +19,6 @@ RSpec.describe PromotionPercentageDiscount, type: :model do
     expect(promotion.is_a?(PromotionDiscount)).to eq(true)
   end
 
-
   describe '#fulfill?' do
     let(:product_100) { FactoryBot.create(:product_100) }
     let(:promotion) do

@@ -38,6 +38,13 @@ class Order < ApplicationRecord
     false
   end
 
+  def item_exists?(item)
+    order_items.each do |oi|
+      return true if oi.itemable == item
+    end
+    false
+  end
+
   private
 
   def calculate_amount
