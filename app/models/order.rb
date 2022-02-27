@@ -4,7 +4,7 @@ class Order < ApplicationRecord
   # Callbacks
   before_validation :calculate_amount
 
-  enum state: { init: 0, checked: 1 }
+  enum state: { init: 0, checking: 1, paid: 2 }
 
   # Validations
   validates :amount, numericality: { greater_than: 0 }, if: :product_items?
@@ -18,13 +18,17 @@ class Order < ApplicationRecord
     source_type: 'Promotion'
 
   def add_item(item, quantity = 0)
-    order_item = order_items.select { |oi| oi.item == item }.first
+    return if paid?
+
+    order_item = order_items.select { |oi| oi.itemable == item }.first
     order_items.build(itemable: item, quantity: quantity) unless order_item
   end
 
   def add_item!(item, quantity = 0)
+    return if paid?
+
     oi = add_item(item, quantity)
-    oi.save!
+    save!
   end
 
   def product_items?
@@ -37,6 +41,7 @@ class Order < ApplicationRecord
   private
 
   def calculate_amount
+    return if paid?
     return unless product_items?
 
     self.amount = order_items.map do |oi|

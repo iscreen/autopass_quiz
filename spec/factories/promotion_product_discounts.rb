@@ -7,6 +7,6 @@ FactoryBot.define do
     end_date { 10.days.since }
     association :product, factory: :product_100
     exceed_quantity { 2 }
-    amount { 100 }
+    discount_amount { 5 }
   end
 end

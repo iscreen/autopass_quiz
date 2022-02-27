@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :product do
+    initialize_with { new.class.find_or_initialize_by(name: name) }
     sequence(:name) { |n| "Product#{n}" }
     sequence(:price) { |_| rand(1...10) * 100 }
 

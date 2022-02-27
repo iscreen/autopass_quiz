@@ -7,4 +7,6 @@ class Promotion < ApplicationRecord
   validates :end_date, presence: true, comparison: { greater_than: :start_date }
   # Associations
   has_many :order_items, as: :itemable
+
+  scope :availables, -> { where(arel_table[:start_date].lteq(Time.current)).where(arel_table[:end_date].gteq(Time.current)) }
 end
