@@ -114,6 +114,44 @@ RSpec.describe CalculatorService, type: :service do
       expect(order.discount).to eq(0)
       expect(order.item_exists?(promotion)).to eq(false)
     end
+    it 'order amount is over but exceed limitaion' do
+      order.add_item!(product_100, 2)
+      order.add_item!(promotion)
+      expect(promotion.fulfill?(order)).to be_truthy
+      order2 = FactoryBot.create(:order, user: user)
+      order2.add_item!(product_100, 2)
+      CalculatorService.new(order2).perform
+      expect(order2.discount).to eq(0)
+    end
   end
   # end discount has limitation
+
+  describe 'complex specific product and percentage discount' do
+    let(:discount_percentage) { 5 }
+    let(:product_100) { FactoryBot.create(:product_100) }
+    let!(:promotion) do
+      FactoryBot.create(
+        :promotion_percentage_discount,
+        amount: product_100.price * 2,
+        discount_percentage: discount_percentage
+      )
+    end
+    let(:discount_amount) { 10 }
+    let!(:promotion2) do
+      FactoryBot.create(
+        :promotion_product_discount,
+        product: product_100,
+        discount_amount: discount_amount
+      )
+    end
+    let(:order) { FactoryBot.create(:order) }
+
+    it 'order amount enough' do
+      order.add_item!(product_100, 2)
+      CalculatorService.new(order).perform
+
+      discount = order.amount * discount_percentage / 100 + discount_amount
+      expect(order.discount).to eq(discount)
+    end
+  end
 end

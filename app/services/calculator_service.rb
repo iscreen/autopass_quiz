@@ -30,6 +30,6 @@ class CalculatorService
   # calculate order's discount
   def calculate_discount
     discount = @order.promotions.map { |promotion| promotion.discount(@order) }.sum
-    @order.update(discount: discount)
+    @order.update(discount: @order.amount > discount ? discount : @order.amount)
   end
 end
