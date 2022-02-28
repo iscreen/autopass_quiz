@@ -7,8 +7,10 @@ class CalculatorService
   end
 
   def perform
-    check_promotions
-    calculate_discount
+    @order.with_lock do
+      check_promotions
+      calculate_discount
+    end
   end
 
   private
